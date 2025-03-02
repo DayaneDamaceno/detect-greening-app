@@ -38,11 +38,11 @@
     "extra": {
       "router": {
         "origin": false
-      },
-      "eas": {
-        "projectId": "5c346c29-78f6-4741-ac43-6854679f6ccc"
-      }
-    },
-    "owner": "day04"
+      }//,
+      //"eas": {
+      //  "projectId": "5c346c29-78f6-4741-ac43-6854679f6ccc"
+     // }
+    }//,
+    //"owner": "day04"
   }
 }
