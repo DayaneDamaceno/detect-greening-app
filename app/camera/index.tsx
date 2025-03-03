@@ -72,15 +72,13 @@ const styles = StyleSheet.create({
     height: '100%',
     width: '100%',
     flex: 1,
-    //justifyContent: "center", // Centraliza verticalmente
-    alignItems: "center", // Centraliza horizontalmente
+    alignItems: "center", 
     
   },
   conteudo: {
     height: 500,
     width: 300,
     gap: 10,
-    //justifyContent: "center", // Centraliza verticalmente
     position: "relative", 
     top: 80,
     //backgroundColor: 'black',
@@ -92,10 +90,10 @@ const styles = StyleSheet.create({
    //backgroundColor: 'blue',
   },
   textoPergunta: {
-    fontSize: 17, // Tamanho da fonte
-    fontWeight: "bold", // Negrito
-    textAlign: "center", // Garante centralização do texto dentro do próprio componente
-    color: "#85E99A", // Cor do texto
+    fontSize: 17, 
+    fontWeight: "bold", 
+    textAlign: "center", 
+    color: "#85E99A", 
   },
   caixaTextoRandomico:{
     width: 300,
@@ -103,10 +101,10 @@ const styles = StyleSheet.create({
     //backgroundColor: 'green',
   },
   textoRandomico: {
-    fontSize: 28, // Tamanho da fonte
-    fontWeight: "900", // Negrito
-    textAlign: "center", // Garante centralização do texto dentro do próprio componente
-    color: "#92C29C", // Cor do texto
+    fontSize: 28, 
+    fontWeight: "900", 
+    textAlign: "center", 
+    color: "#92C29C", 
   },
   gradient: {
     width: 300,
@@ -123,7 +121,7 @@ const styles = StyleSheet.create({
     height: 130,
     width: 350,
     //backgroundColor: '#5f9ea0',
-    justifyContent: "center", // Centraliza verticalmente
+    justifyContent: "center", 
     position: "relative", 
     top: 120,
     flexDirection: "row",

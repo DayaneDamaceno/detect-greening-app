@@ -9,6 +9,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import CameraScreen from './camera';
 import InicialScreen from './camera';
+import CapturasScreen from './capturas';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -37,6 +38,6 @@ export default function RootLayout() {
     //   </Stack>
     //   <StatusBar style="auto" />
     // </ThemeProvider>
-    <InicialScreen></InicialScreen>
+    <CapturasScreen></CapturasScreen>
   );
 }
