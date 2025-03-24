@@ -1,14 +1,17 @@
 import React from "react";
-import { ImageBackground, Image, StyleSheet, Platform, View, Text} from "react-native";
+import { TouchableOpacity, ScrollView, ImageBackground, Image, StyleSheet, Platform, View, Text} from "react-native";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from "expo-linear-gradient";
 import { HelloWave } from '@/components/HelloWave';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { useRouter } from "expo-router";
 
 
 export default function CapturasScreen() {
+  const router = useRouter();
+
   return (
 
   <ImageBackground 
@@ -19,33 +22,25 @@ export default function CapturasScreen() {
     
     <View style={styles.tela}>
       <View style={styles.menuJanela}>
-        <View style={styles.sair}>
+        <TouchableOpacity style={styles.sair} onPress={() => router.back()}>
           <Text style={styles.x}>X</Text>
-        </View>
+        </TouchableOpacity>
 
         <Text style={styles.tituloTela}>Capturas</Text>
       </View>
-      <LinearGradient
-        colors={[
-
-          '#000000', // Mantém o preto até perto de 70%
-          '#010603',
-          '#010D04',
-          '#021206',
-          '#021706',
-          '#031807',
-          '#031A08',
-          '#031B08', // Tom final mais esverdeado
-        ]}
-        locations={[0, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1]} // Gradiente só começa a mudar depois de 70%
-        start={{ x: 0, y: 0 }}
-        end={{ x: 0, y: 1 }}
-        style={styles.conteudo}
+      <ImageBackground 
+        source={{ uri: "https://i.imgur.com/wNVr4HC_d.webp?maxwidth=760&fidelity=grand" }} 
+        style={styles.conteudoFundo}
       >
-      
-      
-      </LinearGradient>
+        <ScrollView  style={styles.conteudo}>
 
+          <View style={styles.addFoto}>
+            <Image  source={{ uri: 'https://i.imgur.com/OBbbd2y_d.webp?maxwidth=760&fidelity=grand' }} style={styles.imgAlbum} />
+            <Text style={styles.textGaleria}>Galeria</Text>
+          </View>
+
+        </ScrollView >
+      </ImageBackground>
     </View>
   </ImageBackground>
   );
@@ -99,12 +94,35 @@ const styles = StyleSheet.create({
     textAlign: "center", 
     color: "#ffffff", 
   },
-  conteudo: {
+  conteudoFundo: {
     height: '100%',
     width: '100%',
     position: "relative", 
     top: 50,
-    backgroundColor: 'black',
-    alignItems: "center",
+
   },
+  conteudo: {
+    height: '100%',
+    width: '100%',
+    padding: 20,
+  },
+  addFoto: {
+    height: 110,
+    width: 110,
+    borderRadius: 30,
+    backgroundColor: '#1B1B1B',
+    alignItems: "center",
+    justifyContent: 'center',   
+  },
+  imgAlbum:{
+    height: 60,
+    width: 60,
+    marginBottom: -3,
+  },
+  textGaleria:{
+    fontSize: 14, 
+    fontWeight: "500", 
+    textAlign: "center", 
+    color: "white", 
+  }
 });
