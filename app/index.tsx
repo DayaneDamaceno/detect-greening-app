@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {TextInput, Button, ScrollView, TouchableOpacity, ImageBackground, Image, StyleSheet, Platform, View, Text, StatusBar} from "react-native";
+import {TextInput, Button, ScrollView, TouchableOpacity, ImageBackground, Image, StyleSheet, Platform, View, Text, StatusBar } from "react-native";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from "expo-linear-gradient";
 import { HelloWave } from '@/components/HelloWave';
@@ -15,14 +15,16 @@ export default function LoginScreen() {
   const [pw, setPw] = useState("");
 
   function autenticar(){
-    router.push("/inicial")
+    router.replace("/inicial")
 
   }
   
   return (
+
+
     
     <View style={styles.tela}>
-      
+      <StatusBar barStyle="light-content" backgroundColor="#121212" translucent={false} />
       <View style={styles.login}>
         <View style={styles.headerTop}>
           <Text style={styles.textLogin}>Login</Text>
@@ -69,6 +71,8 @@ const styles = StyleSheet.create({
     alignItems: "center", 
     justifyContent: "center",
     backgroundColor: "black",
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+    
   },
   login: {
     height: 400,
@@ -121,7 +125,7 @@ const styles = StyleSheet.create({
     width: 300,
     alignContent: 'center',
     justifyContent: 'center',
-    backgroundColor: '#5C7B63',
+    backgroundColor: '#4F8D5B',
     alignItems: "center",
     borderRadius: 10,
   }

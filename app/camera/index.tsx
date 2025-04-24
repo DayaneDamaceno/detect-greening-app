@@ -8,71 +8,151 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { CameraMode, CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import {useState, useRef } from 'react';
+import {useState, useRef, useEffect } from 'react';
 import { useRouter } from "expo-router";
+import * as Location from 'expo-location';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function CameraScreen() {
-  const [facing, setFacing] = useState<CameraType>('back');
   const [permission, requestPermission] = useCameraPermissions();
   const [uri, setUri] = useState<string | null>(null);
   const ref = useRef<CameraView>(null);
   const router = useRouter();
+  //const [localizacao, setLocalizacao] = useState<Location.LocationObject | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [statusLocalizacao, setStatusLocalizacao] = useState('');
 
+  type Foto = {
+    uri: string;
+    latitude: string;
+    longitude: string
+  };
+  
 
-if (!permission) {
-  // Camera permissions are still loading.
-  return <View />;
-}
+  useEffect(() => {
+    
+    if ((permission && !permission.granted) || statusLocalizacao !== 'granted') {
+      requestPermission();
+      permissaoPegarLocalizacao();
+    }
 
-if (!permission.granted) {
-  // Camera permissions are not granted yet.
-  return (
-    <View style={styles.containerPermissao}>
-      <Text style={styles.messagePermissao}>Precisamos da sua permissão para acessar a câmera</Text>
-      <Button onPress={requestPermission} title="CONCEDER PERMISSÃO" />
-    </View>
-  );
-}
+  }, [permission, Location]);
 
-/* --Será permetido apenas foto com a camera traseira
-function virarCamera() {
-  setFacing(current => (current === 'back' ? 'front' : 'back'));
-}
-*/
+  const salvarFoto = async (caminho:string, latitude:string, longitude:string) => {
+    const listaFotos = await descarregarGeoFotos();
+    
+    let captura: Foto = {
+      uri: caminho,
+      latitude: latitude,
+      longitude: longitude
+    };
+    
+    let ultimoIndex =  listaFotos.length;
+    listaFotos[ultimoIndex] = captura;
 
-const tirarFoto = async () => {
+    carregarGeoFotos(listaFotos);
+  };
+
+  const descarregarGeoFotos = async () => {
+      const conteudoJson = await AsyncStorage.getItem("@geoFotos");
+      return conteudoJson ? JSON.parse(conteudoJson) : [];
+  };
+
+  const carregarGeoFotos = async (listaFotos:string) => {
+    await AsyncStorage.setItem("@geoFotos", JSON.stringify(listaFotos));
+  };
+
+  async function permissaoPegarLocalizacao() {
+    if(statusLocalizacao !== 'granted'){
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      setStatusLocalizacao(status);
+    }
+  }
+  async function pegarLocalizacao() {
+    let local = await Location.getLastKnownPositionAsync();
+    return local;
+  }
+
+  async function salvarLocalDiretorioCache(uriFoto:string) {
+    const caminhoDaPasta = await uriFoto.substring(0, uriFoto.lastIndexOf('/') + 1);
+    await AsyncStorage.setItem("@localFotos", caminhoDaPasta);
+    //console.log(caminhoDaPasta);
+  }
+
+  const tirarFoto = async () => {
+
     const photo = await ref.current?.takePictureAsync();
-    console.log(photo?.uri);
-}
 
-function fecharCamera(){
-  router.back();
-}
+    let localizacao = await pegarLocalizacao();
+    
+    //console.log(localizacao);
+    //console.log(photo?.uri);
 
-return (
-  <View style={styles.container}>
-    <CameraView style={styles.camera} ref={ref} facing={facing} mode={'picture'} responsiveOrientationWhenOrientationLocked>
+    await salvarLocalDiretorioCache(photo?.uri || "")
+    
+    let separarBarra = photo?.uri.split("/");
+    if(photo?.uri && separarBarra && localizacao)
+    {
+      salvarFoto(separarBarra[separarBarra.length - 1], localizacao?.coords.latitude.toString(), localizacao?.coords.longitude.toString());
+    }
+    
+    //let valor = await descarregarGeoFotos()
+    //const conteudoJson = await AsyncStorage.getItem("@geoFotos");
+      //console.log(conteudoJson);
+      
+  }
 
+  function fecharCamera(){
+    router.back();
+  }
+
+  if ((permission && !permission.granted) || statusLocalizacao !== 'granted') {
+    // Quando a permissão foi negada, retornará essa tela com uma msg indicando ao usuario para habilitar a permissao
+    return (
+    
+      <View style={styles.containerPermissao}>
+        <StatusBar barStyle="light-content" backgroundColor="#121212" translucent={false} />
         <TouchableOpacity style={styles.fecharCamera} onPress={fecharCamera}>
           <ImageBackground 
             source={{ uri: "https://cdn-icons-png.flaticon.com/256/458/458595.png" }} 
             style={styles.x}
           ></ImageBackground>
         </TouchableOpacity>
-      
-        <TouchableOpacity style={styles.buttonCamera} onPress={tirarFoto}>
-          <ImageBackground 
-            // VENRDE source={{ uri: "https://i.imgur.com/hD6QEap.png" }} 
-            source={{ uri: "https://i.imgur.com/qkSV6k6.png" }} 
-            style={styles.cameraImgBotaoCaptura}
-          ></ImageBackground>
-        </TouchableOpacity>
 
-          
+        <Text style={styles.messagePermissao}>Vá em "Configurações" para ativar as permissões de câmera e de localização. <Text style={{ fontWeight: 'bold' }}>Sem essas permissões, não é possível tirar fotos.</Text> </Text>
+
+      </View>
       
-    </CameraView>
-  </View>
-);
+    );
+  }
+  else
+  {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" backgroundColor="#121212" translucent={false} />
+        <CameraView style={styles.camera} ref={ref} facing={'back'} mode={'picture'} responsiveOrientationWhenOrientationLocked>
+
+            <TouchableOpacity style={styles.fecharCamera} onPress={fecharCamera}>
+              <ImageBackground 
+                source={{ uri: "https://cdn-icons-png.flaticon.com/256/458/458595.png" }} 
+                style={styles.x}
+              ></ImageBackground>
+            </TouchableOpacity>
+          
+            <TouchableOpacity style={styles.buttonCamera} onPress={tirarFoto}>
+              <ImageBackground 
+                // btn Verde source={{ uri: "https://i.imgur.com/hD6QEap.png" }} 
+                source={{ uri: "https://i.imgur.com/qkSV6k6.png" }} 
+                style={styles.cameraImgBotaoCaptura}
+              ></ImageBackground>
+            </TouchableOpacity>
+
+              
+          
+        </CameraView>
+      </View>
+    );
+}
 }
 
 const styles = StyleSheet.create({
@@ -84,12 +164,14 @@ containerPermissao:{
   flex: 1,
   padding:60,
   justifyContent: 'center',
-  alignContent: 'center'
+  alignContent: 'center',
+  backgroundColor: 'black'
 },
 messagePermissao: {
   textAlign: 'center',
   paddingBottom: 10,
-  fontSize: 18
+  fontSize: 18,
+  color: 'white',
 },
 camera: {
   flex: 1,

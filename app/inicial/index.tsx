@@ -17,8 +17,7 @@ export default function InicialScreen() {
       source={{ uri: "https://i.imgur.com/mhyHNC8_d.webp?maxwidth=760&fidelity=grand" }} 
       style={styles.background}
     >
-
-    
+    <StatusBar barStyle="light-content" backgroundColor="#121212" translucent={false} />
     <View style={styles.tela}>
       
       <View style={styles.conteudo}>
@@ -44,13 +43,13 @@ export default function InicialScreen() {
       <View style={styles.menu}>
         <TouchableOpacity>
           <ImageBackground 
-            source={{ uri: "https://i.imgur.com/EZJEKZu_d.webp?maxwidth=760&fidelity=grand" }} 
+            source={{ uri: "" }} 
             style={styles.resultados}
           ></ImageBackground>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => router.push("/camera")}>
           <ImageBackground 
-            source={{ uri: "https://i.imgur.com/3uwkFQF_d.webp?maxwidth=760&fidelity=grand" }} 
+            source={{ uri: "https://i.imgur.com/FDOsCkG.png" }} 
             style={styles.camera}
           ></ImageBackground>
         </TouchableOpacity>
