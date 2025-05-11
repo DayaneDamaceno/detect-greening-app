@@ -28,7 +28,7 @@
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="myapp"/>
-        <data android:scheme="com.detectgreening"/>
+        <data android:scheme="exp+detect-greening-app"/>
       </intent-filter>
     </activity>
   </application>

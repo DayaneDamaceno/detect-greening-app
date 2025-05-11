@@ -11,8 +11,9 @@ import { useRouter } from "expo-router";
 import MiniaturaImagemCapturasScreen from "./miniaturaImagem";
 import * as FileSystem from 'expo-file-system';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import CarregandoProcessamento from "./carregandoProcessamento";
+import JanelasPopUp from "./janelasPopUp"
 import JSZip from 'jszip';
+import { enviarZipNuvem } from "./chamadaAPI";
 
 
 export default function CapturasScreen() {
@@ -24,6 +25,7 @@ export default function CapturasScreen() {
   const [localDiretorioFotos, setLocalDiretorioFotos] = useState("");
   const cancelarProcessamentoRef = useRef(false);
   const [janelaPop, setJanelaPop ] = useState("")
+  const [imgSerDeletada, setImgSerDeletada ] = useState("")
 
   useEffect(() => {
 
@@ -54,16 +56,24 @@ export default function CapturasScreen() {
   const retornoJanela = (retorno:string) => {
     if(retorno == "CancelarProcessamento")
       cancelarProcessamentoRef.current = true;
-    else if (retorno == "FecharPop")
+    else if (retorno == "FecharPop" || retorno == "Cancelar")
       setPopUpProcessandoImg("none");
-
-      
-
+    else if (retorno == "ExcluirImagem")
+    {
+      deletarImagem(imgSerDeletada);
+      setPopUpProcessandoImg("none");
+    }
+    else if (retorno == "LimparGaleria")
+    {
+      setPopUpProcessandoImg("none");
+      limparImagens();
+    }
   };
 
   const handleImagemDeletada = (imagemUri: string) => {
-    deletarImagem(imagemUri);
-    console.log("Imagem deletada:", imagemUri);
+    setJanelaPop("ExcluirImagem");
+    setImgSerDeletada(imagemUri);
+    setPopUpProcessandoImg("flex");
   };
 
   const deletarImagem = async (imagemUri: string) => {
@@ -88,16 +98,25 @@ export default function CapturasScreen() {
     }
   };
 
-  const processarImagens = async () => {
-    console.log("CHegou Aqui")
-
+  const processarImagensPopUp = () => {
     setJanelaPop("ProcessandoImagens");
     
-    await InteractionManager.runAfterInteractions(async () => {
-        await zipArquivos(localDiretorioFotos, listaImg);
+    InteractionManager.runAfterInteractions(async () => {
+      processarImagens(localDiretorioFotos, listaImg);
  
     });
 
+  };
+
+  const perguntarPopUpLimparGaleria = async () => {
+    if(localDiretorioFotos){
+      setJanelaPop("LimparGaleria");
+      setPopUpProcessandoImg("flex");
+    }
+    else
+    {
+      console.log("Não há registro a ser limpo");
+    }
   };
 
   const limparCache = async () => {
@@ -117,7 +136,7 @@ export default function CapturasScreen() {
       let localImg = localDiretorioFotos
 
       if(localImg)
-        {
+      {
         const files = await FileSystem.readDirectoryAsync(localImg);
         
         for (const file of files) {
@@ -129,13 +148,14 @@ export default function CapturasScreen() {
         
         console.log('Todos os arquivos foram deletados');
       }
+
     } catch (error) {
       console.error('Erro ao deletar arquivos:', error);
     }
   };
 
-  const zipArquivos = async (caminhoImagens: string, imagens: string) => {
-
+  const processarImagens = async (caminhoImagens: string, imagens: string) => {
+    
     if(caminhoImagens && imagens)
     {
       setPopUpProcessandoImg("flex");
@@ -147,7 +167,8 @@ export default function CapturasScreen() {
 
         const listaImagens = imagens ? JSON.parse(imagens) : [];
 
-        for (let i = 0; i < listaImagens.length; i++) {
+        for (let i = 0; i < listaImagens.length; i++) 
+        {
           const nomeArquivo = listaImagens[i].uri;
           const uri = caminhoImagens + nomeArquivo;
 
@@ -170,6 +191,15 @@ export default function CapturasScreen() {
 
           //console.log(uri);
         }
+
+
+        //Cria o arquivo metadata.json, que tem a geolocalização
+        const caminhoMetadataJson = await criarArquivoJson();
+        const metaDataJson = await FileSystem.readAsStringAsync(caminhoMetadataJson || "" , {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        zip.file("metadata.json", metaDataJson, { base64: true });
+        
         
         console.log("3 " + cancelarProcessamentoRef.current);
         
@@ -207,8 +237,11 @@ export default function CapturasScreen() {
             break;
           }
 
-          setPopUpProcessandoImg("none");
 
+          await enviarZipNuvem();
+
+          setPopUpProcessandoImg("none");
+        
         break;
       }
     }
@@ -217,6 +250,25 @@ export default function CapturasScreen() {
       console.log("Não foi possivel processar a img")
     }
 
+  };
+
+  const criarArquivoJson = async () => {
+    const path = FileSystem.documentDirectory + 'metadata.json';
+
+    const substituidoUriFilename = listaImg.replace(/"uri":/g, '"filename":');
+    const arquivo = `{"locations": [ ${substituidoUriFilename} ]}`;
+
+    try {
+      await FileSystem.writeAsStringAsync(path, arquivo, {
+        encoding: FileSystem.EncodingType.UTF8,
+      });
+      console.log('Arquivo metadata.json criado com sucesso');
+      
+      return path;
+
+    } catch (error) {
+      console.error('Erro ao criar arquivo - ', error);
+    }
   };
 
   return (
@@ -272,10 +324,10 @@ export default function CapturasScreen() {
         </View >
 
         <View style={styles.btnRodape}>
-          <TouchableOpacity onPress={() => processarImagens()}  style={styles.btnProcessarImg}>
+          <TouchableOpacity onPress={() => processarImagensPopUp()}  style={styles.btnProcessarImg}>
             <Text style={styles.textGaleria}>Processar</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => limparImagens()} style={styles.btnLimparImg}>
+          <TouchableOpacity onPress={() => perguntarPopUpLimparGaleria()} style={styles.btnLimparImg}>
             <Text style={styles.textGaleria}>Limpar</Text>
           </TouchableOpacity>
         </View>
@@ -285,7 +337,7 @@ export default function CapturasScreen() {
       <Image  source={{ uri: caminhoImgSelecionada }} style={[styles.imgTelaCheia, { display: abrirImgSelecionada }]} />
           
       <View style={[styles.janelaProcessamento, {display: popUpProcessandoImg}]}>
-          <CarregandoProcessamento btnClique={(x) => retornoJanela(x)} janela={janelaPop} />
+          <JanelasPopUp btnClique={(x) => retornoJanela(x)} janela={janelaPop} />
       </View>
           
     </View>

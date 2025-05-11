@@ -13,7 +13,11 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.detectgreening"
+      "googleServicesFile": "./google-services.json",
+      "package": "com.detectgreening",
+      "permissions": [
+        "android.permission.CAMERA"
+      ]
     },
     "web": {
       "bundler": "metro",
@@ -38,6 +42,17 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
           "recordAudioAndroid": false
         }
+      ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/auth",
+      "@react-native-firebase/crashlytics",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static"
+          }
+        }
       ]
     ],
     "experiments": {
@@ -46,11 +61,10 @@
     "extra": {
       "router": {
         "origin": false
-      }//,
-      //"eas": {
-      //  "projectId": "5c346c29-78f6-4741-ac43-6854679f6ccc"
-     // }
-    }//,
-    //"owner": "day04"
+      },
+      "eas": {
+        "projectId": "7779bdd5-348f-41b3-a323-82e01daeea13"
+      }
+    }
   }
 }

@@ -107,7 +107,7 @@ export default function CameraScreen() {
   }
 
   if ((permission && !permission.granted) || statusLocalizacao !== 'granted') {
-    // Quando a permissão foi negada, retornará essa tela com uma msg indicando ao usuario para habilitar a permissao
+    // Quando a permissão for negada, retornará essa tela com uma msg indicando ao usuario para habilitar a permissao
     return (
     
       <View style={styles.containerPermissao}>

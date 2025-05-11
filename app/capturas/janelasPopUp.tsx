@@ -13,12 +13,12 @@ import * as FileSystem from 'expo-file-system';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { WebView } from 'react-native-webview';
 
-interface CarregandoProcessamentoProps {
+interface janelasPopUpProps {
 btnClique: (x: string) => void;
 janela: string
 }
 
-export default function CarregandoProcessamento({btnClique, janela}:CarregandoProcessamentoProps) {
+export default function JanelasPopUp({btnClique, janela}:janelasPopUpProps) {
 
   useEffect(() => {
     setJanelaDefinida(janela);
@@ -36,8 +36,49 @@ export default function CarregandoProcessamento({btnClique, janela}:CarregandoPr
     btnClique("FecharPop");
   };
 
+  const deletarImg = async () => {
+    btnClique("ExcluirImagem");
+  };
+
+  const cancelar = async () => {
+    btnClique("Cancelar");
+  };
+  const limparGaleria = async () => {
+    btnClique("LimparGaleria");
+  };
+
   return (
   <>
+
+    {janelaDefinida == "ExcluirImagem" && (
+      <View style={styles.janelaLimparGaleria}>
+        <Text style={[styles.msgAviso, {fontWeight: 'bold' }]}>Tem certeza que deseja excluir a imagem?</Text>
+        
+        <View style={styles.areaBtnjanelaLimparGaleria}>
+          <TouchableOpacity onPress={() => cancelar()} style={styles.btnCancelarLimparGaleria}>
+            <Text style={styles.txtCancelar}>Cancelar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => deletarImg()} style={styles.btnLimparLimparGaleria}>
+            <Text style={styles.txtCancelar}>Deletar</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    )}
+
+    {janelaDefinida == "LimparGaleria" && (
+      <View style={styles.janelaLimparGaleria}>
+        <Text style={styles.msgAviso}><Text style={[styles.msgAviso, {fontWeight: 'bold' }]}>Deseja prosseguir com a exclusão de todas imagens da galeria? </Text>Esta ação é irreversível</Text>
+        
+        <View style={styles.areaBtnjanelaLimparGaleria}>
+          <TouchableOpacity onPress={() => cancelar()} style={styles.btnCancelarLimparGaleria}>
+            <Text style={styles.txtCancelar}>Cancelar</Text>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => limparGaleria()} style={styles.btnLimparLimparGaleria}>
+            <Text style={styles.txtCancelar}>Limpar</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    )}
 
     {janelaDefinida == "CancelandoProcessamento" && (
       <View style={styles.janelaCancelando}>
@@ -105,6 +146,15 @@ const styles = StyleSheet.create({
     padding: 50,
     alignItems: 'center',
   },
+  janelaLimparGaleria: {
+    height: 220,
+    width: 370,
+    top:200,
+    backgroundColor: 'black',
+    borderRadius: 10,
+    padding: 35,
+    alignItems: 'center',
+  },
   msgAviso:{
     fontSize: 18, 
     //fontWeight: "500", 
@@ -137,4 +187,31 @@ const styles = StyleSheet.create({
     textAlign:'center',
     justifyContent: 'center',
   },
+  areaBtnjanelaLimparGaleria:{
+    height: '100%',
+    width: 370,
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap:10,
+    marginTop:25
+  },btnCancelarLimparGaler:{
+
+  },
+  btnLimparLimparGaleria:{
+    height: 60,
+    width: 140,
+    borderRadius: 10,
+    backgroundColor: '#A63737',
+    textAlign:'center',
+    justifyContent: 'center',
+  },
+  btnCancelarLimparGaleria:{
+    height: 60,
+    width: 140,
+    borderRadius: 10,
+    backgroundColor: '#919191',
+    textAlign:'center',
+    justifyContent: 'center',
+  },
+
 });
