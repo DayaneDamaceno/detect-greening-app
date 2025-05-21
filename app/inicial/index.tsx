@@ -25,7 +25,7 @@ export default function InicialScreen() {
           <Text style={styles.textoPergunta}>Posso explorar sua plantação?</Text>
         </View>
         <View style={styles.caixaTextoRandomico}>
-          <MaskedView maskElement={<Text style={styles.textoRandomico}>"A greening é considerada uma das doenças mais graves do mundo"</Text>}>
+          <MaskedView maskElement={<Text style={styles.textoRandomico}>"A Greening é considerada uma das doenças mais graves do mundo"</Text>}>
             <LinearGradient
               colors={["#5f966a", "#dfede2"]}
               start={{ x: 0, y: 1 }}

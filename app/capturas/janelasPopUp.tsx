@@ -48,7 +48,26 @@ export default function JanelasPopUp({btnClique, janela}:janelasPopUpProps) {
   };
 
   return (
-  <>
+  <View>
+    {janelaDefinida.includes("ErroAPI") && (
+      <View style={styles.janelaConcluido}>
+        <Text style={styles.msgAviso}>Falha na comunicação com a nuvem. Entre em contato com o suporte técnico</Text>
+        
+        <TouchableOpacity onPress={() => proceesamentoCancelando()} style={styles.btnVoltar}>
+          <Text style={styles.txtBtn}>Ok</Text>
+        </TouchableOpacity>
+      </View>
+    )}
+
+    {janelaDefinida == "PorcessouSucesso" && (
+      <View style={styles.janelaConcluido}>
+        <Text style={styles.msgAviso}>O processamento foi concluindo</Text>
+        
+        <TouchableOpacity onPress={() => proceesamentoCancelando()} style={styles.btnVoltar}>
+          <Text style={styles.txtBtn}>Ok</Text>
+        </TouchableOpacity>
+      </View>
+    )}
 
     {janelaDefinida == "ExcluirImagem" && (
       <View style={styles.janelaLimparGaleria}>
@@ -56,10 +75,10 @@ export default function JanelasPopUp({btnClique, janela}:janelasPopUpProps) {
         
         <View style={styles.areaBtnjanelaLimparGaleria}>
           <TouchableOpacity onPress={() => cancelar()} style={styles.btnCancelarLimparGaleria}>
-            <Text style={styles.txtCancelar}>Cancelar</Text>
+            <Text style={styles.txtBtn}>Cancelar</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => deletarImg()} style={styles.btnLimparLimparGaleria}>
-            <Text style={styles.txtCancelar}>Deletar</Text>
+            <Text style={styles.txtBtn}>Deletar</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -71,10 +90,10 @@ export default function JanelasPopUp({btnClique, janela}:janelasPopUpProps) {
         
         <View style={styles.areaBtnjanelaLimparGaleria}>
           <TouchableOpacity onPress={() => cancelar()} style={styles.btnCancelarLimparGaleria}>
-            <Text style={styles.txtCancelar}>Cancelar</Text>
+            <Text style={styles.txtBtn}>Cancelar</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => limparGaleria()} style={styles.btnLimparLimparGaleria}>
-            <Text style={styles.txtCancelar}>Limpar</Text>
+            <Text style={styles.txtBtn}>Limpar</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -91,7 +110,7 @@ export default function JanelasPopUp({btnClique, janela}:janelasPopUpProps) {
         <Text style={styles.msgAviso}>O processamento foi cancelado</Text>
         
         <TouchableOpacity onPress={() => proceesamentoCancelando()} style={styles.btnVoltar}>
-          <Text style={styles.txtCancelar}>Ok</Text>
+          <Text style={styles.txtBtn}>Ok</Text>
         </TouchableOpacity>
       </View>
     )}
@@ -100,17 +119,17 @@ export default function JanelasPopUp({btnClique, janela}:janelasPopUpProps) {
     <View style={styles.janela}>
       <Text style={styles.msgAviso}>Estamos enviando suas imagens para a nuvem, não saia desta tela</Text>
       
-      <WebView  source={require('../../img/Carregando.gif')} style={styles.carregandoGIF} />
+      <Image  source={{ uri: 'https://i.imgur.com/nNqFad3.gif' }} style={styles.carregandoGIF} />
 
       <Text style={[styles.msgAviso, {fontWeight: 'bold' }]}> Isso pode levar alguns instantes</Text>
       
       <TouchableOpacity onPress={() => cancelarProcessamento()} style={styles.btnCancelar}>
-                  <Text style={styles.txtCancelar}>Cancelar</Text>
+                  <Text style={styles.txtBtn}>Cancelar</Text>
       </TouchableOpacity>
     </View>
     )}
 
-  </>
+  </View>
   );
   
 }
@@ -127,6 +146,17 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   janelaCancelar: {
+    height: 200,
+    width: 370,
+    top:280,
+    backgroundColor: 'black',
+    borderRadius: 10,
+    padding: 40,
+    gap: 25,
+    alignItems: 'center',
+    justifyContent: "center"
+  },
+    janelaConcluido: {
     height: 200,
     width: 370,
     top:280,
@@ -163,6 +193,7 @@ const styles = StyleSheet.create({
   },
   carregandoGIF:{
     width: 170,
+    height:170,
     backgroundColor: 'black'
   },  
   btnCancelar:{
@@ -173,7 +204,7 @@ const styles = StyleSheet.create({
     textAlign:'center',
     justifyContent: 'center',
   },
-  txtCancelar:{
+  txtBtn:{
     fontSize: 16, 
     textAlign: "center",
     fontWeight: "500", 

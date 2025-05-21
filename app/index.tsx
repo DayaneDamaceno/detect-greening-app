@@ -2,15 +2,16 @@ import React, { useState } from "react";
 import { TextInput, Button, ScrollView, TouchableOpacity, StyleSheet, Platform, View, Text, StatusBar } from "react-native";
 import { useRouter } from "expo-router";
 import { getAuth, signInWithEmailAndPassword } from '@react-native-firebase/auth';
+import RedefinirSenhaPopUp from "./redefinirSenhaPopUp";
 
 
 
-export default function LoginScreen(){
+export default function LoginScreen() {
   const router = useRouter();
   const [user, setUser] = useState("");
   const [pw, setPw] = useState("");
   const [error, setError] = useState("");
-
+  const [popUpRedefinirSenha, setPopUpRedefinirSenha] = useState<"none" | "flex">("none");
 
   function entrar() {
     router.replace("/inicial");
@@ -24,14 +25,20 @@ export default function LoginScreen(){
   try {
     const result = await signInWithEmailAndPassword(getAuth(), user.trim(), pw);
     
-    if (!result.user || !result.user.uid)
-      throw new Error();
+    if (!result.user || !result.user.uid )
+      setError("Usuário ou senha incorreto")
 
-    entrar(); // função de navegação ou mudança de estado
+    entrar();
+
   } catch (error) {
-    setError("Usuário ou senha incorreto.")
+    if(String(error).includes("[auth/wrong-password]") || String(error).includes("[auth/user-not-found]") || String(error).includes("[auth/invalid-email]") )
+      setError("Usuário ou senha incorreto")
+    else
+      setError("Verifique sua conexão com a internet")
+    
     console.log('Erro no login:', error);
   }
+    
 };
 
   return (
@@ -46,7 +53,7 @@ export default function LoginScreen(){
         <View style={styles.inputs}>
           
           <View style={styles.acessoCaixa}>
-            <Text style={styles.acessoText}>Usuário</Text>
+            <Text style={styles.acessoText}>E-mail</Text>
             <TextInput
               style={styles.acessoInput}
               placeholder="usuario@email.com"
@@ -77,9 +84,17 @@ export default function LoginScreen(){
           <Text style={styles.acessoText}>Acessar</Text>
         </TouchableOpacity>
 
-        <Text style={styles.textEquecSenha}>Esqueceu a senha?</Text>
+         <TouchableOpacity onPress={() => setPopUpRedefinirSenha("flex")}>
+          <Text style={styles.textEquecSenha}>Esqueceu a senha?</Text>
+        </TouchableOpacity>
+        
 
       </View>
+      
+      <View style={[styles.janelaPopUp, {display: popUpRedefinirSenha}]} >
+          <RedefinirSenhaPopUp btnFecharJanela={() => setPopUpRedefinirSenha("none")} />
+      </View>
+
     </View>
   );
 }
@@ -162,11 +177,18 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center'
   },
-
   textEquecSenha: {
     color: '#7E93E5',
     fontSize: 15,
     marginTop: -20,
     textDecorationLine: 'underline'
-  }
+  },
+  janelaPopUp:{
+    position: 'absolute',
+    height: "100%",
+    width: "100%",
+    backgroundColor: 'rgba(36, 36, 36, 0.55)',
+    alignItems: 'center',
+    display: "none",
+  },
 });

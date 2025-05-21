@@ -50,13 +50,3 @@ Join our community of developers creating universal apps.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
 
 
-execute: npx expo prebuild --clean
-O comando npx expo prebuild --clean é usado para (re)gerar os projetos nativos (android/ e ios/) de um app Expo com configurações limpas, a partir do app.json ou app.config.js.
-
-
-depois: npx react-native run-android
-O comando npx react-native run-android é utilizado para compilar e instalar um aplicativo React Native diretamente em um emulador Android ou dispositivo físico conectado via USB, sem usar o Expo.
-
-
-e por ultimo: npx expo start
-Ele serve para iniciar o projeto

@@ -1,37 +1,39 @@
+import { Buffer } from 'buffer';
 import * as FileSystem from 'expo-file-system';
 
-const API_URL = 'Informe a URL';
+global.Buffer = Buffer;
 
-export const enviarZipNuvem = async () => {
-  const fileUri = FileSystem.documentDirectory + 'capturas_greening.zip';
+const API_URL = "LINK"
 
-  console.log('Caminho do arquivo:', fileUri);
+const EnviarZipNuvem = async () => {
+  
+    const fileUri = FileSystem.documentDirectory + 'capturas_greening.zip';
 
-  const fileInfo = await FileSystem.getInfoAsync(fileUri);
-  if (!fileInfo.exists) {
-    console.error('Arquivo ZIP não encontrado:', fileUri);
-    return;
-  }
+    const fileInfo = await FileSystem.getInfoAsync(fileUri);
+    if (!fileInfo.exists) {
+      console.error('Arquivo ZIP não encontrado:', fileUri);
+      return;
+    }
 
-  const formData = new FormData();
-  formData.append('file', {
-    uri: fileUri,
-    name: 'capturas_greening.zip',
-    type: 'application/zip',
-  } as any);
-
-  try {
-    const response = await fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      body: formData,
+    const fileContent = await FileSystem.readAsStringAsync(fileUri, {
+      encoding: FileSystem.EncodingType.Base64,
     });
 
-    const result = await response.text();
-    console.log('Retornou: ', result);
-  } catch (error) {
-    console.error('Erro ao enviar o .zip:', error);
-  }
+    const response = await fetch(API_URL, {
+      method: 'PUT',
+      headers: {
+        'x-ms-blob-type': 'BlockBlob',
+        'Content-Type': 'application/zip',
+      },
+      body: Buffer.from(fileContent, 'base64'),
+    });
+
+    if (response.ok) {
+      console.log('Upload realizado com sucesso');
+    } else {
+      const errorText = await response.text();
+      console.error('Erro no upload:', errorText);
+    }
 };
+
+export default { EnviarZipNuvem };

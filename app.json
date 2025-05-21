@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "detect-greening-app",
+    "name": "Cuida Citrus",
     "slug": "detect-greening-app",
-    "version": "1.0.0",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "detectgreening",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "android": {
@@ -17,7 +17,8 @@
       "package": "com.detectgreening",
       "permissions": [
         "android.permission.CAMERA"
-      ]
+      ],
+      "versionCode": 2
     },
     "web": {
       "bundler": "metro",
@@ -47,12 +48,7 @@
       "@react-native-firebase/auth",
       "@react-native-firebase/crashlytics",
       [
-        "expo-build-properties",
-        {
-          "ios": {
-            "useFrameworks": "static"
-          }
-        }
+        "expo-build-properties"
       ]
     ],
     "experiments": {
@@ -63,7 +59,7 @@
         "origin": false
       },
       "eas": {
-        "projectId": "7779bdd5-348f-41b3-a323-82e01daeea13"
+        "projectId": "0ac95a8e-7002-40f5-b42d-25330e35843a"
       }
     }
   }

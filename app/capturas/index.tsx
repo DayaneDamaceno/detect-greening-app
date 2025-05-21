@@ -13,7 +13,7 @@ import * as FileSystem from 'expo-file-system';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import JanelasPopUp from "./janelasPopUp"
 import JSZip from 'jszip';
-import { enviarZipNuvem } from "./chamadaAPI";
+import EnviarZipNuvem from "./chamadaAPI";
 
 
 export default function CapturasScreen() {
@@ -54,6 +54,7 @@ export default function CapturasScreen() {
   };
 
   const retornoJanela = (retorno:string) => {
+    setJanelaPop("");
     if(retorno == "CancelarProcessamento")
       cancelarProcessamentoRef.current = true;
     else if (retorno == "FecharPop" || retorno == "Cancelar")
@@ -150,7 +151,7 @@ export default function CapturasScreen() {
       }
 
     } catch (error) {
-      console.error('Erro ao deletar arquivos:', error);
+      console.error('Erro ao deletar arquivos: ', error);
     }
   };
 
@@ -158,91 +159,96 @@ export default function CapturasScreen() {
     
     if(caminhoImagens && imagens)
     {
-      setPopUpProcessandoImg("flex");
-      cancelarProcessamentoRef.current = false
+      try {
+        setPopUpProcessandoImg("flex");
+        cancelarProcessamentoRef.current = false
 
-      while(true)
-      {
-        const zip = new JSZip();
-
-        const listaImagens = imagens ? JSON.parse(imagens) : [];
-
-        for (let i = 0; i < listaImagens.length; i++) 
+        while(true)
         {
-          const nomeArquivo = listaImagens[i].uri;
-          const uri = caminhoImagens + nomeArquivo;
+          const zip = new JSZip();
 
-          console.log("1 " + cancelarProcessamentoRef.current);
+          const listaImagens = imagens ? JSON.parse(imagens) : [];
+
+          for (let i = 0; i < listaImagens.length; i++) 
+          {
+            const nomeArquivo = listaImagens[i].uri;
+            const uri = caminhoImagens + nomeArquivo;
+
+            console.log("1 " + cancelarProcessamentoRef.current);
+            if(cancelarProcessamentoRef.current)
+              {
+                setJanelaPop("ProceesamentoCancelando");
+                break;
+              }
+
+            // Lê o arquivo como base64
+            const base64 = await FileSystem.readAsStringAsync(uri, {
+              encoding: FileSystem.EncodingType.Base64,
+            });
+
+            console.log("2 " + cancelarProcessamentoRef.current);
+
+            // Adiciona ao zip
+            zip.file(nomeArquivo, base64, { base64: true });
+
+            //console.log(uri);
+          }
+
+
+          //Cria o arquivo metadata.json, que tem a geolocalização
+          const caminhoMetadataJson = await criarArquivoJson();
+          const metaDataJson = await FileSystem.readAsStringAsync(caminhoMetadataJson || "" , {
+            encoding: FileSystem.EncodingType.Base64,
+          });
+          zip.file("metadata.json", metaDataJson, { base64: true });
+          
+          
+          console.log("3 " + cancelarProcessamentoRef.current);
+          
+          if(cancelarProcessamentoRef.current)
+          {
+            setJanelaPop("ProceesamentoCancelando");
+            break;
+          }
+
+          // Gera o conteúdo do zip em base64
+          const zipBase64 = await zip.generateAsync({ type: 'base64' });
+
+
+          // Caminho onde o zip será salvo
+          const zipPath = FileSystem.documentDirectory + 'capturas_greening.zip';
+          
+          console.log("4 " + cancelarProcessamentoRef.current);
           if(cancelarProcessamentoRef.current)
             {
               setJanelaPop("ProceesamentoCancelando");
               break;
             }
 
-          // Lê o arquivo como base64
-          const base64 = await FileSystem.readAsStringAsync(uri, {
+          // Salva o zip no sistema de arquivos
+          await FileSystem.writeAsStringAsync(zipPath, zipBase64, {
             encoding: FileSystem.EncodingType.Base64,
           });
 
-          console.log("2 " + cancelarProcessamentoRef.current);
+          console.log('Arquivo criado em:', zipPath);
+          
+          console.log("5 " + cancelarProcessamentoRef.current);
+          if(cancelarProcessamentoRef.current)
+            {
+              setJanelaPop("ProceesamentoCancelando");
+              break;
+            }
 
-          // Adiciona ao zip
-          zip.file(nomeArquivo, base64, { base64: true });
 
-          //console.log(uri);
-        }
-
-
-        //Cria o arquivo metadata.json, que tem a geolocalização
-        const caminhoMetadataJson = await criarArquivoJson();
-        const metaDataJson = await FileSystem.readAsStringAsync(caminhoMetadataJson || "" , {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-        zip.file("metadata.json", metaDataJson, { base64: true });
-        
-        
-        console.log("3 " + cancelarProcessamentoRef.current);
-        
-        if(cancelarProcessamentoRef.current)
-        {
-          setJanelaPop("ProceesamentoCancelando");
+            await EnviarZipNuvem.EnviarZipNuvem();
+            setJanelaPop("PorcessouSucesso");
+          
           break;
         }
 
-        // Gera o conteúdo do zip em base64
-        const zipBase64 = await zip.generateAsync({ type: 'base64' });
-
-
-        // Caminho onde o zip será salvo
-        const zipPath = FileSystem.documentDirectory + 'capturas_greening.zip';
-        
-        console.log("4 " + cancelarProcessamentoRef.current);
-        if(cancelarProcessamentoRef.current)
-          {
-            setJanelaPop("ProceesamentoCancelando");
-            break;
-          }
-
-        // Salva o zip no sistema de arquivos
-        await FileSystem.writeAsStringAsync(zipPath, zipBase64, {
-          encoding: FileSystem.EncodingType.Base64,
-        });
-
-        console.log('Arquivo criado em:', zipPath);
-        
-        console.log("5 " + cancelarProcessamentoRef.current);
-        if(cancelarProcessamentoRef.current)
-          {
-            setJanelaPop("ProceesamentoCancelando");
-            break;
-          }
-
-
-          await enviarZipNuvem();
-
-          setPopUpProcessandoImg("none");
-        
-        break;
+      } catch (error) {
+        console.log("Erro ao enviar processar: ", error)
+        setJanelaPop("ErroAPI");
       }
     }
     else
@@ -267,7 +273,7 @@ export default function CapturasScreen() {
       return path;
 
     } catch (error) {
-      console.error('Erro ao criar arquivo - ', error);
+      console.error('Erro ao criar arquivo: ', error);
     }
   };
 
