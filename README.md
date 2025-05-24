@@ -1,7 +1,7 @@
 
 # 🍊 Cuida Cintrus
 
-**Aplicativo mobile desenvolvido com [Expo](https://expo.dev) e [React Native](https://reactnative.dev), com foco em saúde e bem-estar.**
+**Aplicativo mobile desenvolvido com [Expo](https://expo.dev) e [React Native](https://reactnative.dev).**
 
 Repositório oficial: [detect-greening-app](https://github.com/DayaneDamaceno/detect-greening-app)  
 Desenvolvido por: [duhbp](https://github.com/duhbp)
