@@ -3,7 +3,7 @@ import * as FileSystem from 'expo-file-system';
 
 global.Buffer = Buffer;
 
-const API_URL = "LINK"
+const API_URL = 'INFORME O LINK';
 
 const EnviarZipNuvem = async () => {
   

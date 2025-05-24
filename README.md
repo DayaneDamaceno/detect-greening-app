@@ -1,52 +1,86 @@
-# Welcome to your Expo app 👋
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+# 🍊 Cuida Cintrus
 
-## Get started
+**Aplicativo mobile desenvolvido com [Expo](https://expo.dev) e [React Native](https://reactnative.dev), com foco em saúde e bem-estar.**
 
-1. Install dependencies
+Repositório oficial: [detect-greening-app](https://github.com/DayaneDamaceno/detect-greening-app)  
+Desenvolvido por: [duhbp](https://github.com/duhbp)
 
-   ```bash
-   npm install
-   ```
+---
 
-2. Start the app
+## 📱 Sobre o projeto
 
-   ```bash
-    npx expo start
-   ```
+O **Cuida Cintrus** é um aplicativo mobile que permite a **captura de imagens** e o **registro da geolocalização** dessas capturas.  
 
-In the output, you'll find options to open the app in a
+Esses dados são enviados para a **nuvem**, onde são **processados** para realizar a **análise da praga Greening** por meio de **visão computacional**.  
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+---
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+## 📦 Download do aplicativo
 
-## Get a fresh project
+Para baixar o aplicativo, acesse:  
+👉 [Download Cuida Cintrus](https://drive.google.com/drive/folders/19HAyZMKJIEgoa0IMsxnh0pqTq3KDUqmF)
 
-When you're ready, run:
+---
+
+## 🚀 Tecnologias utilizadas
+
+- [React Native](https://reactnative.dev/)
+- [Expo](https://expo.dev/)
+- [Expo Router](https://expo.dev/router/introduction)
+
+---
+
+## ⚙️ Como rodar o projeto
+
+### 1. Clone o repositório:
 
 ```bash
-npm run reset-project
+git clone https://github.com/DayaneDamaceno/detect-greening-app.git
+cd detect-greening-app
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### 2. Instale as dependências:
 
-## Learn more
+```bash
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+### 3. Gere os arquivos nativos com o prebuild:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Antes de rodar o projeto, execute:
 
-## Join the community
+```bash
+npx expo prebuild
+```
 
-Join our community of developers creating universal apps.
+Este comando gera as pastas nativas `android` e `ios`.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### 4. Inicie o app para desenvolvimento (emulador ou dispositivo físico):
+
+```bash
+npx expo start
+```
+
+### 5. Compilar e rodar no Android (gerar APK):
+
+Antes de compilar e gerar o APK, rode:
+
+```bash
+npx react-native run-android
+```
+e depois:
+
+```bash
+npx expo prebuild --clean
+```
 
 
+
+## 🤝 Contato
+
+- 💻 [Duarte - duhbp](https://github.com/duhbp)
+
+---
+
+**Feito com ❤️ pela equipe Cuida Cintrus.**

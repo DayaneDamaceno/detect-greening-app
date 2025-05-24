@@ -19,7 +19,12 @@ export default function InicialScreen() {
     >
     <StatusBar barStyle="light-content" backgroundColor="#121212" translucent={false} />
     <View style={styles.tela}>
-      
+      <View style={styles.areaSair}>
+      <TouchableOpacity onPress={() => router.replace('/')} style={styles.btnSair}>
+        <Text style={styles.txtSair}>Sair</Text> 
+        <Image  source={{ uri: 'https://i.imgur.com/kJ1cjdZ.png' }} style={styles.imgSair}/>
+      </TouchableOpacity>
+      </View>
       <View style={styles.conteudo}>
         <View style={styles.caixaTextoPergunta}>
           <Text style={styles.textoPergunta}>Posso explorar sua plantação?</Text>
@@ -79,12 +84,37 @@ const styles = StyleSheet.create({
     alignItems: "center", 
     
   },
+  areaSair:{
+    height: 55,
+    width: '100%',
+    alignItems: 'flex-end',
+    paddingRight:12,
+    //backgroundColor:'black',
+    paddingTop:13,
+  },
+  btnSair:{
+    height: 30,
+    width: 60,
+    flexDirection: 'row',
+    //backgroundColor:'red',
+    gap:5
+  },
+  imgSair:{
+    height: 25,
+    width: 25,
+  },
+  txtSair:{
+    color: '#fff',
+    fontSize: 17,
+    textDecorationLine: 'underline',
+    fontWeight: "bold", 
+  },
   conteudo: {
     height: 500,
     width: 300,
     gap: 10,
     position: "relative", 
-    top: 80,
+    top: 45,
     //backgroundColor: 'black',
     alignItems: "center",
   },
@@ -127,7 +157,7 @@ const styles = StyleSheet.create({
     //backgroundColor: '#5f9ea0',
     justifyContent: "center", 
     position: "relative", 
-    top: 120,
+    top: 95,
     flexDirection: "row",
     gap: 70,
   },
